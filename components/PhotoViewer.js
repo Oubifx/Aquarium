@@ -42,13 +42,16 @@ const PhotoViewer = () => {
             scrollY.value = e.contentOffset.y
         },
     });
-
+/*
+                [ITEM_HEIGHT, ITEM_HEIGHT*index, ITEM_HEIGHT*(index+3)],
+                [1, 1, 0],
+*/
     const Planet = ({item, index}) => {
         const scaleAnim = useAnimatedStyle(() => {
             const scale = interpolate(
                 scrollY.value, 
-                [ITEM_HEIGHT, ITEM_HEIGHT*index, ITEM_HEIGHT*(index+3)],
-                [1, 1, 0],
+                [ITEM_HEIGHT, ITEM_HEIGHT*index-height,  ITEM_HEIGHT*(index)-ITEM_HEIGHT*3],
+                [0, 0, 1],
                 { extrapolateRight: Extrapolation.CLAMP });
             return {
               transform: [{ scale: scale }],
