@@ -1,6 +1,6 @@
 import React from 'react';
-import { Dimensions, FlatList, Image, View } from 'react-native';
-import { useSharedValue } from 'react-native-reanimated';
+import { Dimensions, FlatList, Image, Text, View } from 'react-native';
+import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
 
 const IMAGES = [
     require('../images/planet1.png'),
@@ -30,28 +30,41 @@ const IMAGES = [
 ];
 
 const {height, width} = Dimensions.get('screen')
-const ITEM_SIZE = width
+const ITEM_HEIGHT = height/5
+const ITEM_IDENT = 20
 
 const PhotoViewer = () => {
 
+    const scrollX = useSharedValue(0)
+
+    const onScroll = useAnimatedScrollHandler({
+        onScroll: (e) => {
+            console.log(e.contentOffset.y)
+        },
+    });
+
     const renderItem = ({item}) => {
-        console.log('images: ',item)
         return (
-            <View style={{width: ITEM_SIZE, height: height/3, backgroundColor: 'orange', justifyContent: 'center', alignItems: 'center', borderWidth: 2}}>
-                <Image resizeMode={'contain'} style={{flex: 1, margin: 20}} source={item}/>
+            <View style={{backgroundColor: 'orange', justifyContent: 'center', alignItems: 'center', width: width, height: ITEM_HEIGHT, borderWidth: 1, borderColor: 'white'}}>
+                <View style={{margin: 50, backgroundColor: 'darkgreen', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                    <Image resizeMode={'contain'} style={{backgroundColor: 'black', width: width-ITEM_IDENT, height: ITEM_HEIGHT-ITEM_IDENT}} source={item}/>
+                </View>
             </View>
         )
     }
-
+    
     return (
-        <FlatList
-            bounces={false}
-            data={IMAGES}
-            renderItem={renderItem}
-            style={{backgroundColor: 'pink', flex: 1}}
-            snapToInterval={height/3}
-            contentContainerStyle={{justifyContent: 'center', alignItems: 'center', backgroundColor: 'brown'}}
-        />
+        <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+            <Animated.FlatList
+                bounces={false}
+                data={IMAGES}
+                renderItem={renderItem}
+                snapToInterval={ITEM_HEIGHT}
+                style={{flex: 1}}
+                onScroll={onScroll}
+            />
+        </View>
+
     )
 }
 
