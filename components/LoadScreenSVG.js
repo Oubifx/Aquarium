@@ -1,29 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Text, View } from "react-native";
-import Animated, { Easing, useAnimatedProps, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import Animated, { Easing, interpolate, useAnimatedProps, useSharedValue, withRepeat, withSpring, withTiming } from "react-native-reanimated";
 import Svg, { Path, Polyline } from "react-native-svg";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 const LoadScreenSVG = () => {
-    const levelx1 = useSharedValue(50);
-    const levelx2 = useSharedValue(50);
-    const levelx3 = useSharedValue(50);
+    const loadingStatus = useSharedValue(90)
 
+    const levelx1 = useSharedValue(6);
+    const levelx2 = useSharedValue(-6);
+    const levely = useSharedValue(3)
+
+    const fillSVG = () => {
+        loadingStatus.value = withTiming(-10, {
+            duration: 5000,
+        }); 
+    }
+
+    const emptySVG = () => {
+        loadingStatus.value = withTiming(90, {
+            duration: 5000,
+        }); 
+    }
+
+    const wave = () => {
+
+        levely.value = withRepeat(withSpring(-3), -1, true)
+        levelx1.value = withRepeat(withSpring(levelx2.value), -1, true)
+        levelx2.value = withRepeat(withSpring(levelx1.value), -1, true)
+    }
+    
     const animatedProps = useAnimatedProps(() => {
-        const myPath = `M 0 50 V 0 H 100 V 50 
-        C 93.3333 ${levelx1.value} 86.6667 ${levelx2.value} 80 ${levelx3.value} 
-        C 73.3333 ${levelx1.value} 66.6667 ${levelx2.value} 60 ${levelx3.value} 
-        C 53.3333 ${levelx1.value} 46.6667 ${levelx2.value} 40 ${levelx3.value} 
-        C 33.3333 ${levelx1.value} 26.6667 ${levelx2.value} 20 ${levelx3.value} 
-        C 13.3333 ${levelx1.value} 6.6667  ${levelx2.value} 0  ${levelx3.value}`
+        const myPath = `
+        M 100 100 H 100 V ${loadingStatus.value} 
+        Q 90 ${levelx1.value+loadingStatus.value} ${80 + levely.value} ${loadingStatus.value}
+        Q 70 ${levelx2.value+loadingStatus.value} ${60 + levely.value} ${loadingStatus.value} 
+        Q 50 ${levelx1.value+loadingStatus.value} ${40 + levely.value} ${loadingStatus.value} 
+        Q 30 ${levelx2.value+loadingStatus.value} ${20 + levely.value} ${loadingStatus.value} 
+        Q 10 ${levelx1.value+loadingStatus.value} ${0}  ${loadingStatus.value} 
+        V 100
+        `
         
       return {
         d: myPath
       };
     });
     console.log("RESULT:",animatedProps)
-    // attach animated props to an SVG path using animatedProps
+
+    wave()
     return (
         <View>
         <Animated.View style={{backgroundColor: 'white', width: 100, height: 100, alignSelf: 'center', margin: 10}}>
@@ -35,16 +60,8 @@ const LoadScreenSVG = () => {
             />
             </Svg>
         </Animated.View>
-        <Button onPress={() => {
-                levelx1.value = withSpring(60)
-                levelx3.value = withSpring(50)
-                levelx2.value = withSpring(50)
-                }} title={"FILL"}/>
-            <Button onPress={() => {
-                levelx1.value = withSpring(50)
-                levelx3.value = withSpring(50)
-                levelx2.value = withSpring(60)
-            }} title={"EMPTY"}/>
+        <Button onPress={() => {fillSVG()}} title={"FILL"}/>
+            <Button onPress={() => {emptySVG()}} title={"EMPTY"}/>
         </View>
     )
 }
