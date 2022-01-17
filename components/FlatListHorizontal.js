@@ -13,7 +13,6 @@ const FlatListHorizontal = () => {
     
     const onViewableItemsChanged = ({ viewableItems, changed }) => {
         let visible = viewableItems
-        console.log(visible)
         visible[3]?.["index"] ? selectedElm.value = visible[3]["index"] : null
     }
     

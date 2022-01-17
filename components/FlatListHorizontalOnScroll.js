@@ -39,7 +39,6 @@ const FlatListHorizontalOnScroll = () => {
 const ImageView = ({ item, index, scrollX }) => {
     const animatedStyles = useAnimatedStyle(() => {
         const scale = interpolate(scrollX.value, [(index) * ITEM_SIZE, (index+2) * ITEM_SIZE], [1, 2], { extrapolateRight: Extrapolation.CLAMP });
-        console.log(scrollX.value, ' Index:', index, ' Interpolate: ', scale)
         return {
           transform: [{ scale: scale }],
         };
