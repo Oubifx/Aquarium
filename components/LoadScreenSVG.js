@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Text } from "react-native";
+import { Button, Text, View } from "react-native";
 import Animated, { Easing, useAnimatedProps, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import Svg, { Path, Polyline } from "react-native-svg";
 
@@ -25,6 +25,7 @@ const LoadScreenSVG = () => {
     console.log("RESULT:",animatedProps)
     // attach animated props to an SVG path using animatedProps
     return (
+        <View>
         <Animated.View style={{backgroundColor: 'white', width: 100, height: 100, alignSelf: 'center', margin: 10}}>
             <Svg height="100" width="100">
             <AnimatedPath
@@ -33,7 +34,8 @@ const LoadScreenSVG = () => {
                 animatedProps={animatedProps}
             />
             </Svg>
-            <Button onPress={() => {
+        </Animated.View>
+        <Button onPress={() => {
                 levelx1.value = withSpring(60)
                 levelx3.value = withSpring(50)
                 levelx2.value = withSpring(50)
@@ -43,7 +45,7 @@ const LoadScreenSVG = () => {
                 levelx3.value = withSpring(50)
                 levelx2.value = withSpring(60)
             }} title={"EMPTY"}/>
-        </Animated.View>
+        </View>
     )
 }
 

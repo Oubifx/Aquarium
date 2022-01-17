@@ -26,6 +26,8 @@ const FlatListHorizontal = () => {
     return (
         <View>
             <Animated.FlatList
+                style={{backgroundColor: 'red', height: 100, width: '100%'}}
+                bounces={false}
                 data={[...Array(64).keys()]}
                 onViewableItemsChanged={onViewableItemsChanged}
                 viewabilityConfig={{
