@@ -40,19 +40,21 @@ const PhotoViewer = () => {
     const onScroll = useAnimatedScrollHandler({
         onScroll: (e) => {
             scrollY.value = e.contentOffset.y
+            //console.log(scrollY.value)
         },
     });
 /*
-                [ITEM_HEIGHT, ITEM_HEIGHT*index, ITEM_HEIGHT*(index+3)],
-                [1, 1, 0],
+                [ITEM_HEIGHT*(index+1),ITEM_HEIGHT*index],
+                [0.5, 1],
 */
     const Planet = ({item, index}) => {
         const scaleAnim = useAnimatedStyle(() => {
             const scale = interpolate(
-                scrollY.value, 
-                [ITEM_HEIGHT, ITEM_HEIGHT*index-height,  ITEM_HEIGHT*(index)-ITEM_HEIGHT*3],
-                [0, 0, 1],
+                index * ITEM_HEIGHT - scrollY.value, 
+                [-ITEM_HEIGHT,0, height-ITEM_HEIGHT, height],
+                [0.5, 1, 1 ,0.5],
                 { extrapolateRight: Extrapolation.CLAMP });
+                console.log(scale)
             return {
               transform: [{ scale: scale }],
             };
