@@ -49,8 +49,9 @@ const App = () => {
     </NavigationContainer>
   );
   */
+ //<PhotoViewer/>
  return (
-    <PhotoViewer/>
+    <LoadScreen/>
  )
 };
 
