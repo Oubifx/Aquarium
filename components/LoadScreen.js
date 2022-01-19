@@ -8,47 +8,51 @@ const LoadScreen = () => {
 
     const rocketX = useSharedValue(0);
     const rocketY = useSharedValue(0);
+
+    // служит для того что бы потом повернуть ракету в другую сторону
     const isGoBack = useSharedValue(false);
+
+    // определяем ширину экрана + запас за экраном для маршрута
     const rocketPathWidth = width + 100
 
-    const flyRocket = () => {
-        
-        rocketX.value = 0
-        rocketY.value = 0
-        rocketX.value = withRepeat(
-            withDelay(1000,
-                withSequence(
-                    withTiming(rocketPathWidth, {
-                        duration: 3000,
-                        easing: Easing.bezier(1, 1, 1, 1),
-                    }),
-                    withTiming(0, {
-                        duration: 3000,
-                        easing: Easing.bezier(1, 0.8, 0.8, 0.2),
-                    }),
-                ),
-            ), -1
-        )
+    // горизонтальное движение. Запускается синхронно с вертикальным
+    rocketX.value = withRepeat(
+        withDelay(1000,
+            withSequence(
+                withTiming(rocketPathWidth, {
+                    duration: 3000,
+                    easing: Easing.bezier(1, 1, 1, 1),
+                }),
+                withTiming(0, {
+                    duration: 3000,
+                    easing: Easing.bezier(1, 0.8, 0.8, 0.2),
+                }),
+            ),
+        ), -1
+    )
 
-        rocketY.value = withRepeat(
-            withDelay(1000,
-                withSequence(
-                    withTiming(50, {
-                        duration: 3000,
-                        easing: Easing.bezier(1, 1, 1, 1)
-                    }, () => isGoBack.value = true),
-                    withTiming(10, {
-                        duration: 3000,
-                        easing: Easing.bezier(1, 0.8, 0.8, 0.2),
-                    }, () => isGoBack.value = false),
-                ),
-            ), -1
-        )
-    }
+    // вертикальное движение. Запускается синхронно с горизонтальным
+    rocketY.value = withRepeat(
+        withDelay(1000,
+            withSequence(
+                withTiming(50, {
+                    duration: 3000,
+                    easing: Easing.bezier(1, 1, 1, 1)
+                }, () => isGoBack.value = true),
+                withTiming(10, {
+                    duration: 3000,
+                    easing: Easing.bezier(1, 0.8, 0.8, 0.2),
+                }, () => isGoBack.value = false),
+            ),
+        ), -1
+    )
+
     
-    
+    // rocketPath помещается в стили вью с ракетой
     const rocketPath = useAnimatedStyle(() => {
+        // Обычный синус обвешенный нужными мне множителями для достижения нужного эффекта на экране
         const transY = parseInt(`${26*Math.sin(rocketY.value/6)}`)
+        // Та же самая формула, но с добавлением углаю | +8 служит для того что бы сделать поворот заранее
         const rotateZ = isGoBack.value ? `${270+(26*Math.sin((rocketY.value+8)/6))}deg` : `${90+(26*Math.sin((rocketY.value+8)/6))}deg`
         return {
             transform: [
@@ -59,9 +63,7 @@ const LoadScreen = () => {
         };
     });
 
-    const handShake = 
 
-    flyRocket()
     return (
         <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <View style={{flex: 1, justifyContent:'center'}}>
@@ -130,35 +132,24 @@ const LoadingDot = (animateStyle) => {
 const HandShakeMan = () => {
     const handShake = useSharedValue(0); 
     handShake.value = withRepeat(
-        withDelay(500,
-                withTiming(4, {
-                    duration: 3000,
-                    easing: Easing.bezier(1, 1, 1, 1),
-                }),
-        ), -1
+                withTiming(-20, {
+                    duration: 400,
+                    easing: Easing.bezier(0.2, 1, 1, 1),
+                }), -1, true
     )
 
-    const handShakeRotate = (index) => useAnimatedStyle(() => {
+    const handShakeRotate = useAnimatedStyle(() => {
         return {
-            opacity: handShake.value>index ? 
-                withTiming(1, {
-                    duration: 1000,
-                    easing: Easing.bezier(1, 1, 1, 1),
-                }) : 
-                withTiming(0, {
-                    duration: 1000,
-                    easing: Easing.bezier(1, 1, 1, 1),
-                })
+            transform: [{translateX: 30}, {translateY: 40}, {rotateZ: `${handShake.value}deg`}]
         }
     });
 
     return (
-        <ImageBackground source={require('../images/Body.png')} resizeMode={'center'} style={{width: 200, height: 200}}>
-            <Animated.View style={[{width: 100, height: 100, justifyContent: 'center' ,alignItems: 'center'}, {transform: [{translateX: 30}, {translateY: 40}, handShakeRotate]}]}>
+        <ImageBackground source={require('../images/Body.png')} resizeMode='contain' style={{width: 200, height: 200, transform: [{scale: 1}]}}>
+            <Animated.View style={[{width: 100, height: 100, justifyContent: 'center' ,alignItems: 'center'}, handShakeRotate]}>
                 <Image 
                     source={require('../images/Hand.png')} 
-                    resizeMode={'center'}
-                    style={{flex: 1, transform: [{translateY: -10}]}}
+                    style={{transform: [{translateY: -12}, {translateX: -3}, {scale: 0.5}]}}
                 />
             </Animated.View>
         </ImageBackground>
